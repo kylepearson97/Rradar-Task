@@ -8,7 +8,9 @@ class Search extends Component {
   };
 
   componentDidMount() {
-    fetch("http://kylepearson.000webhostapp.com/tmdb_5000_movies.json")
+    fetch(
+      "https://s3.eu-west-2.amazonaws.com/rradar-test/tmdb_5000_movies.json"
+    )
       .then(response => {
         return response.json();
       })
@@ -58,7 +60,7 @@ class Search extends Component {
 }
 const selectStyle = {
   padding: "0",
-  margin: "0px 50px",
+  margin: "50px",
   height: "50px",
   width: "80%"
 };
