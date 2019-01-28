@@ -1,43 +1,65 @@
 import React, { Component } from "react";
-export const data = require("../components/data/tmdb_5000_movies");
-var uniqueNames = [];
 
 class Search extends Component {
-  constructor() {
-    super();
-    this.state = {
-      search: ""
-    };
-  }
+  state = {
+    prodComp: [],
+    selectedComp: "",
+    validationError: ""
+  };
 
-  updateSearch(event) {
-    this.setState({ search: event.target.value });
-  }
-
-  Getname() {
-    {
-      data.map(movie => {
-        return JSON.parse(movie.production_companies).map(single => {
-          if (uniqueNames.indexOf(single.name) === -1) {
-            uniqueNames.push(single.name);
-          }
+  componentDidMount() {
+    fetch("http://kylepearson.000webhostapp.com/tmdb_5000_movies.json")
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        let prodFromData = data.map(movie => {
+          return {
+            value: movie.production_companies,
+            display: movie.production_companies
+          };
         });
+        this.setState({
+          prodComp: [
+            { value: "", display: "Select a production company" }
+          ].concat(prodFromData)
+        });
+      })
+      .catch(error => {
+        console.log(error);
       });
-    }
   }
+
   render() {
     return (
       <div>
-        <input
-          type="text"
-          value={this.state.search}
-          onChange={this.updateSearch.bind(this)}
-        />
-        <li>{data.length}</li>
-        {this.Getname()}
-        <li>{uniqueNames}</li>
+        <select
+          style={selectStyle}
+          value={this.state.selectedComp}
+          onChange={e =>
+            this.setState({
+              selectedComp: e.target.value,
+              validationError:
+                e.target.value === ""
+                  ? "You must select a production company"
+                  : ""
+            })
+          }
+        >
+          {this.state.prodComp.map(movie => (
+            <option key={movie.value} value={movie.value}>
+              {movie.display}
+            </option>
+          ))}
+        </select>
       </div>
     );
   }
 }
+const selectStyle = {
+  padding: "0",
+  margin: "0px 50px",
+  height: "50px",
+  width: "80%"
+};
 export default Search;
